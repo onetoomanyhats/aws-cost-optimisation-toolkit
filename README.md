@@ -42,9 +42,3 @@ Cost optimisation is not just deletion:
 - Balance performance vs cost
 
 ---
-
-## 🎯 Why This Matters
-Shows ability to:
-- Reduce real cloud costs
-- Build automation
-- Think like an SRE (not just a script writer)
