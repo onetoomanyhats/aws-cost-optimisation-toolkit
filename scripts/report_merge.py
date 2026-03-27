@@ -2,15 +2,19 @@ import csv
 from glob import glob
 from pathlib import Path
 
-files = glob("reports/*.csv")
 rows = []
-for file in files:
+for file in glob("reports/*.csv"):
     with open(file, newline="", encoding="utf-8") as f:
         rows.extend(list(csv.DictReader(f)))
 
 Path("sample-output").mkdir(exist_ok=True)
-with open("sample-output/optimisation-report.csv", "w", newline="", encoding="utf-8") as f:
-    if rows:
-        writer = csv.DictWriter(f, fieldnames=rows[0].keys())
+output = Path("sample-output/optimisation-report.csv")
+
+if rows:
+    fieldnames = sorted({key for row in rows for key in row.keys()})
+    with output.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
+
+print(f"Wrote consolidated report to {output}")

@@ -1,23 +1,41 @@
-# AWS Cost Optimisation Toolkit
+# AWS Cost Optimisation Toolkit v2
 
-A practical toolkit for identifying common sources of AWS waste and surfacing quick-win optimisation opportunities. This repository is intended to make cloud cost management tangible through lightweight scripts, simple reporting, and operational recommendations.
+A practical toolkit for surfacing common AWS waste patterns and producing lightweight optimisation reports. This version is designed as a portfolio-friendly example of **cost-aware platform engineering** rather than a finance-only script collection.
 
-## What it checks
+## What this repository demonstrates
 
-- Idle EC2 instances
-- Unattached EBS volumes
-- Underutilised instances
-- Idle load balancers
-- Old snapshots
+- Boto3-based AWS inventory and waste detection
+- Clear CLI-driven scripts
+- CSV report generation
+- Consolidated reporting
+- Operationally useful recommendations
+- Engineering-first approach to cloud cost control
 
-## Why this repository matters
+## Why this matters
 
-Cloud cost optimisation is not only a finance exercise; it is part of resilient platform engineering. Removing waste improves:
+Cost optimisation is one of the most valuable DevOps / SRE skills because it sits at the intersection of:
 
-- Spend efficiency
-- Operational discipline
-- Infrastructure visibility
-- Long-term scalability
+- infrastructure visibility
+- workload design
+- scaling policy quality
+- operational discipline
+- business impact
+
+This repo maps well to real work such as rightsizing, identifying idle assets, and building repeatable review processes.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    AWS[(AWS Account)] --> EC2[EC2 Inspector Script]
+    AWS --> EBS[EBS Inspector Script]
+    AWS --> Snap[Snapshot Inspector Script]
+    EC2 --> Merge[Consolidated Report]
+    EBS --> Merge
+    Snap --> Merge
+    Merge --> CSV[CSV Output]
+    Merge --> Review[Engineer Review]
+```
 
 ## Repository structure
 
@@ -25,13 +43,16 @@ Cloud cost optimisation is not only a finance exercise; it is part of resilient 
 .
 ├── reports/
 ├── requirements.txt
+├── sample-output/
+│   └── optimisation-report.csv
 ├── scripts/
+│   ├── common.py
 │   ├── idle_ec2.py
-│   ├── unattached_ebs.py
 │   ├── old_snapshots.py
-│   └── report_merge.py
-└── sample-output/
-    └── optimisation-report.csv
+│   ├── report_merge.py
+│   └── unattached_ebs.py
+└── screenshots/
+    └── README.md
 ```
 
 ## Setup
@@ -42,7 +63,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Configure AWS credentials via environment variables, AWS CLI profile, or instance role.
+Authenticate using AWS CLI credentials, environment variables, or an instance role.
 
 ## Usage
 
@@ -53,22 +74,38 @@ python3 scripts/old_snapshots.py --region eu-west-2 --days 30
 python3 scripts/report_merge.py
 ```
 
-## Engineering approach
+## Example output
 
-The scripts are intentionally:
+The scripts generate simple CSV files suitable for:
+- monthly reviews
+- quick wins
+- attaching to engineering recommendations
+- extending into dashboards or scheduled jobs
 
-- Small and readable
-- Easy to extend
-- Suitable for scheduling
-- Friendly for integration into CI/CD or operational cron workflows
+## Suggested recruiter demo flow
 
-## Potential next steps
+1. Run each detector
+2. Open the consolidated CSV
+3. Explain how you would validate deletion or downsizing candidates
+4. Describe how this evolves into a recurring optimisation workflow
 
-- Add rightsizing recommendations via CloudWatch metrics
-- Add pricing estimates using Cost Explorer
-- Add Slack or email notifications
-- Add multi-account support through AWS Organizations
+## Practical caveats
 
-## Disclaimer
+Recommendations should always be reviewed in business context. Some apparently idle resources may be:
+- DR assets
+- infrequently used but necessary
+- tied to compliance requirements
+- awaiting scheduled cutover or migration
 
-Always validate recommendations against business, compliance, and availability requirements before deleting or modifying resources.
+## Suggested v3 enhancements
+
+- Cost Explorer integration
+- CloudWatch-driven rightsizing
+- Slack notifications
+- multi-account support
+- tagging compliance checks
+- monthly trend reports
+
+## Notes
+
+This repository is intentionally simple enough to be readable but structured enough to feel useful in a real platform team context.

@@ -1,2 +1,4 @@
-resource_type,resource_id,notes
-example,i-1234567890abcdef0,Sample output placeholder
+recommendation,region,resource_id,resource_type,size_gb,start_time,state,instance_type
+Review for stop, terminate, or rightsize,eu-west-2,i-0123456789abcdef0,ec2,,,running,t3.medium
+Validate and delete unattached volume if no longer required,eu-west-2,vol-0123456789abcdef0,ebs,100,,,
+Review snapshots older than 30 days,eu-west-2,snap-0123456789abcdef0,snapshot,,2025-12-01T10:00:00+00:00,,

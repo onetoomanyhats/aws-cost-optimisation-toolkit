@@ -1,25 +1,29 @@
 import argparse
-import csv
-from pathlib import Path
 import boto3
+from common import write_csv
 
 def main(region: str):
     ec2 = boto3.client("ec2", region_name=region)
-    response = ec2.describe_volumes(Filters=[{"Name": "status", "Values": ["available"]}])
+    volumes = ec2.describe_volumes(
+        Filters=[{"Name": "status", "Values": ["available"]}]
+    )["Volumes"]
+
     rows = []
-    for volume in response.get("Volumes", []):
+    for volume in volumes:
         rows.append({
             "resource_type": "ebs",
-            "volume_id": volume["VolumeId"],
+            "resource_id": volume["VolumeId"],
             "size_gb": volume["Size"],
-            "region": region
+            "region": region,
+            "recommendation": "Validate and delete unattached volume if no longer required"
         })
 
-    Path("reports").mkdir(exist_ok=True)
-    with open("reports/unattached_ebs.csv", "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=["resource_type", "volume_id", "size_gb", "region"])
-        writer.writeheader()
-        writer.writerows(rows)
+    path = write_csv(
+        "unattached_ebs.csv",
+        rows,
+        ["resource_type", "resource_id", "size_gb", "region", "recommendation"],
+    )
+    print(f"Wrote {len(rows)} rows to {path}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
